@@ -1,0 +1,12 @@
+{
+  "name": "backend-colab-mvp",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build:dev": "tsc",
+    "start:dev": "node build/src/index.js"
+  },
+  "author": "colab-hub",
+  "license": "ISC",
+  "description": ""
+}
