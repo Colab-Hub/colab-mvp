@@ -5,7 +5,6 @@ import { ClientSchema, GetClientsSchema } from "./clientModel";
 
 import { createApiResponse } from "@/api-docs/openAPIResponseBuilders";
 import { validateRequest } from "@/common/utils/httpHandlers";
-import { userRouter } from "../user/userRouter";
 import { clientController } from "./clientController";
 
 export const clientRegistry = new OpenAPIRegistry();
