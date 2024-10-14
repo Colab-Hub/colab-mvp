@@ -8,19 +8,12 @@ export const commonValidations = {
     .refine((num) => num > 0, "ID must be a positive number"),
 };
 
-const areasOfInterest = [
-  "MARKETING", "DESIGN", "PROGRAMACAO", "MUSICA", "OUTROS"
-] as const;
+const areasOfInterest = ["MARKETING", "DESIGN", "PROGRAMACAO", "MUSICA", "OUTROS"] as const;
 
-const subscriptionLevels = [
-  "BASIC", "PREMIUM", "ENTERPRISE"
-] as const;
+const subscriptionLevels = ["BASIC", "PREMIUM", "ENTERPRISE"] as const;
 
 export const clientValidations = {
-  id: z.string().regex(
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
-    "Invalid UUID format"
-  ),
+  id: z.string().regex(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i, "Invalid UUID format"),
   name: z.string().min(1, "Name is required"),
   surname: z.string().min(1, "Surname is required"),
   age: z.number().int().positive("Age must be a positive integer"),
@@ -35,7 +28,10 @@ export const clientValidations = {
   }),
   isActive: z.boolean(),
   subscriptionLevel: z.enum(subscriptionLevels),
-  cellphone: z.string().min(10, "Cellphone must be at least 10 characters").max(11, "Cellphone must be at most 11 characters"),
+  cellphone: z
+    .string()
+    .min(10, "Cellphone must be at least 10 characters")
+    .max(11, "Cellphone must be at most 11 characters"),
   email: z.string().email("Invalid email format"),
   additionalInfo: z.string().optional(),
   createdAt: z.date(),
