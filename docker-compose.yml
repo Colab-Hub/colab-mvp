@@ -1,9 +1,9 @@
 services:
   backend:
     build: ./backend
-    container_name: mvp_backend
+    container_name: colab_backend_c
     ports:
-      - '3001:3001'
+      - '8080:8080'
     env_file:
       - .env
     networks:
