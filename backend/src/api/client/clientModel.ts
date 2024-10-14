@@ -14,3 +14,7 @@ export const ClientSchema = z.object(clientValidations);
 export const GetClientsSchema = z.object({
   params: z.object({ id: clientValidations.id }),
 });
+
+export const PostClientSchema = z.object({
+  params: ClientSchema,
+});

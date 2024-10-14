@@ -13,6 +13,11 @@ class ClientController {
     const serviceResponse = await clientService.findById(id);
     return handleServiceResponse(serviceResponse, res);
   };
+
+  public createClient: RequestHandler = async (req, res) => {
+    const serviceResponse = await clientService.create(req.body);
+    return handleServiceResponse(serviceResponse, res);
+  };
 }
 
 export const clientController = new ClientController();

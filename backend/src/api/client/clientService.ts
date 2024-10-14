@@ -47,6 +47,21 @@ export class ClientService {
       );
     }
   }
+
+  public async create(client: Client): Promise<ServiceResponse<Client | null>> {
+    try {
+      const newClient: Client | null = await this.clientRepository.createAsync(client);
+      return ServiceResponse.success<Client | null>("Client created", newClient, StatusCodes.CREATED);
+    } catch (error) {
+      const errorMessage = `Error creating client: ${(error as Error).message}`;
+      logger.error(errorMessage);
+      return ServiceResponse.failure(
+        "An error occurred while creating client.",
+        null,
+        StatusCodes.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 }
 
 export const clientService = new ClientService();

@@ -1,10 +1,10 @@
 import { OpenAPIRegistry } from "@asteasolutions/zod-to-openapi";
 import express, { type Router } from "express";
 import { z } from "zod";
-import { ClientSchema, GetClientsSchema } from "./clientModel";
+import { ClientSchema, GetClientsSchema, PostClientSchema } from "./clientModel";
 
 import { createApiResponse } from "@/api-docs/openAPIResponseBuilders";
-import { validateRequest } from "@/common/utils/httpHandlers";
+import { validadePostRequest, validateGetRequest } from "@/common/utils/httpHandlers";
 import { clientController } from "./clientController";
 
 export const clientRegistry = new OpenAPIRegistry();
@@ -18,7 +18,6 @@ clientRegistry.registerPath({
   tags: ["Client"],
   responses: createApiResponse(z.array(ClientSchema), "Success"),
 });
-
 clientRouter.get("/", clientController.getClients);
 
 clientRegistry.registerPath({
@@ -28,5 +27,13 @@ clientRegistry.registerPath({
   request: { params: GetClientsSchema.shape.params },
   responses: createApiResponse(ClientSchema, "Success"),
 });
+clientRouter.get("/:id", validateGetRequest(GetClientsSchema), clientController.getClient);
 
-clientRouter.get("/:id", validateRequest(GetClientsSchema), clientController.getClient);
+clientRegistry.registerPath({
+  method: "post",
+  path: "/clients",
+  tags: ["Client"],
+  request: { params: PostClientSchema.shape.params },
+  responses: createApiResponse(ClientSchema, "Success"),
+});
+clientRouter.post("/", validadePostRequest(ClientSchema), clientController.createClient);
