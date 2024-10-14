@@ -50,13 +50,22 @@ export class ClientService {
 
   public async create(client: Client): Promise<ServiceResponse<Client | null>> {
     try {
-      const newClient: Client | null = await this.clientRepository.createAsync(client);
-      return ServiceResponse.success<Client | null>("Client created", newClient, StatusCodes.CREATED);
+      const newClientResponse: ServiceResponse<Client | null> = await this.clientRepository.createAsync(client);
+      if (newClientResponse.success) {
+        const newClient = newClientResponse.responseObject;
+        return ServiceResponse.success<Client | null>("Signup successful", newClient, StatusCodes.CREATED);
+      } else {
+        return ServiceResponse.failure<Client | null>(
+          newClientResponse.message || "Signup failed",
+          null,
+          newClientResponse.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
+        );
+      }
     } catch (error) {
-      const errorMessage = `Error creating client: ${(error as Error).message}`;
+      const errorMessage = `Error during client creation: ${(error as Error).message}`;
       logger.error(errorMessage);
-      return ServiceResponse.failure(
-        "An error occurred while creating client.",
+      return ServiceResponse.failure<Client | null>(
+        "An error occurred while creating the client.",
         null,
         StatusCodes.INTERNAL_SERVER_ERROR,
       );

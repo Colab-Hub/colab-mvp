@@ -16,7 +16,7 @@ clientRegistry.registerPath({
   method: "get",
   path: "/clients",
   tags: ["Client"],
-  responses: createApiResponse(z.array(ClientSchema), "Success"),
+  responses: createApiResponse(z.array(GetClientsSchema), "Success"),
 });
 clientRouter.get("/", clientController.getClients);
 

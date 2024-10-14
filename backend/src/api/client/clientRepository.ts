@@ -2,6 +2,8 @@ import { type DatabaseHandler, databaseHandler } from "@/common/utils/databaseHa
 import { v4 as uuidv4 } from "uuid";
 import bcrypt from 'bcrypt';
 import type { Client } from "./clientModel";
+import { ServiceResponse } from "@/common/models/serviceResponse";
+import { StatusCodes } from "http-status-codes";
 
 const SELECT_CLIENTS = "SELECT * FROM clients";
 const SELECT_CLIENT_BY_ID = "SELECT * FROM clients WHERE id = $1";
@@ -68,7 +70,7 @@ export class ClientRepository {
     }
   }
 
-  async createAsync(client: Client): Promise<Client | null> {
+  async createAsync(client: Client): Promise<ServiceResponse<Client | null>> {
     try {
       const hashedPassword = await bcrypt.hash(client.password, 10);
       const result = await this.databaseHandler.runQuery(
@@ -95,10 +97,15 @@ export class ClientRepository {
           new Date().toISOString(),
         ],
       );
-      return this.mapRowToClient(result.rows[0]);
+      const clientResponse = this.mapRowToClient(result.rows[0]);
+      return ServiceResponse.success<Client | null>("Login successful", clientResponse, StatusCodes.OK);
     } catch (error) {
-      console.error("Error creating client:", error);
-      return null;
+      console.log("Error creating client: ", (error as Error).message);
+      return ServiceResponse.failure(
+        "An error occurred while logging in.",
+        null,
+        StatusCodes.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }
