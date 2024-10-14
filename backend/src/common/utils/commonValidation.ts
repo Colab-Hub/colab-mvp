@@ -35,3 +35,8 @@ export const clientValidations = {
   createdAt: z.string().optional(),
   updatedAt: z.string().optional(),
 };
+
+export const loginValidations = {
+  email: z.string().email(),
+  password: z.string().min(6).max(50),
+};
