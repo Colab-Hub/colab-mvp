@@ -44,3 +44,8 @@ export const loginValidations = {
 export const authValidations = {
   token: z.string(),
 };
+
+export const createAuthValidations = {
+  id: z.string(),
+  email: z.string().email(),
+};

@@ -1,4 +1,4 @@
-import { authValidations } from "@/common/utils/commonValidation";
+import { authValidations, createAuthValidations } from "@/common/utils/commonValidation";
 import { extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi";
 import { z } from "zod";
 
@@ -12,4 +12,8 @@ export const AuthSchema = z.object(authValidations);
 
 export const PostAuthSchema = z.object({
   params: AuthSchema,
+});
+
+export const CreateAuthSchema = z.object({
+  params: z.object(createAuthValidations),
 });

@@ -12,4 +12,15 @@ export class AuthRepository {
       return ServiceResponse.failure("Invalid token", false, StatusCodes.UNAUTHORIZED);
     }
   }
+  public createToken(createInfo: object): ServiceResponse<string> {
+    try { 
+      const token = jwt.sign(createInfo, process.env.SECRET || "", {
+        expiresIn: "1h",
+      });
+      return ServiceResponse.success("Token created successfully", token, StatusCodes.OK);
+    } catch (error) {
+      console.log("Error creating token: ", (error as Error).message);
+      return ServiceResponse.failure("Error creating token", "", StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+  }
 }

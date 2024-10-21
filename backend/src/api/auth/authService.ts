@@ -24,6 +24,22 @@ export class AuthService {
       );
     }
   }
+
+  public async createToken(createInfo: object): Promise<ServiceResponse<string>> {
+    try {
+      const response = this.authRepository.createToken(createInfo);
+      return response;
+    } catch (error) {
+      const errorMessage = `Error during token creation: ${(error as Error).message}`;
+      logger.error(errorMessage);
+      return ServiceResponse.failure<string>(
+        "An error occurred while creating token.",
+        "",
+        StatusCodes.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
 }
 
 export const authService = new AuthService();
