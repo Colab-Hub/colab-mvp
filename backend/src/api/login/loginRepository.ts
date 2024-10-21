@@ -6,6 +6,11 @@ import type { Login } from "./loginModel";
 
 const SELECT_USER_BY_EMAIL = "SELECT id, email, password FROM clients WHERE email = $1";
 
+interface loginRepositoryResponse {
+  id: string;
+  email: string;
+}
+
 export class LoginRepository {
   private databaseHandler: DatabaseHandler;
 
@@ -31,7 +36,7 @@ export class LoginRepository {
     }
   }
 
-  public async matchEmailAndPassword(email: string, password: string): Promise<ServiceResponse<Login | null>> {
+  public async matchEmailAndPassword(email: string, password: string): Promise<ServiceResponse<loginRepositoryResponse | null>> {
     try {
       const user = await this.findByEmail(email);
       if (!user) {
@@ -41,8 +46,8 @@ export class LoginRepository {
       if (!isMatch) {
         return ServiceResponse.failure("Invalid password", null, StatusCodes.UNAUTHORIZED);
       }
-      const loginData = { id: user.id, email: user.email, password: user.password };
-      return ServiceResponse.success<Login>("Password match", loginData, StatusCodes.OK);
+      const loginData = { id: user.id, email: user.email };
+      return ServiceResponse.success<loginRepositoryResponse>("Password match", loginData, StatusCodes.OK);
     } catch (error) {
       console.log("Error matching email and password: ", (error as Error).message);
       return ServiceResponse.failure(

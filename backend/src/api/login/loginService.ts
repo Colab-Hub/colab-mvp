@@ -1,15 +1,15 @@
 import { ServiceResponse } from "@/common/models/serviceResponse";
 import { logger } from "@/server";
 import { StatusCodes } from "http-status-codes";
-import jwt from "jsonwebtoken";
+import { authService } from "../auth/authService";
 import type { Client } from "../client/clientModel";
 import { ClientRepository } from "../client/clientRepository";
 import type { Login } from "./loginModel";
 import { LoginRepository } from "./loginRepository";
 
 interface JWToken {
+  id: string;
   email: string;
-  clientId: string;
 }
 
 export class LoginService {
@@ -26,24 +26,12 @@ export class LoginService {
       const loginResponse: ServiceResponse<Login | null | JWToken> = await this.loginRepository.loginAsync(login);
 
       if (loginResponse.success && loginResponse.responseObject) {
-        const auth = {
-          secret: String(process.env.SECRET),
-          expires: "1h",
-        };
-
-        if (this.isLoginResponseWithId(loginResponse.responseObject)) {
-          const { id, email } = loginResponse.responseObject;
-          const tokenPayload: JWToken = { clientId: id, email };
-          const token = jwt.sign(tokenPayload, auth.secret, { expiresIn: auth.expires });
-
-          return ServiceResponse.success<string | null>("Login successful", token, StatusCodes.OK);
-        } else {
-          return ServiceResponse.failure<string | null>(
-            "Invalid login response structure.",
-            null,
-            StatusCodes.INTERNAL_SERVER_ERROR,
-          );
-        }
+        const tokenResponse = await authService.createToken(loginResponse.responseObject as JWToken);
+        return ServiceResponse.success<string | null>(
+          tokenResponse.responseObject,
+          null,
+          StatusCodes.OK,
+        );
       } else {
         return ServiceResponse.failure<string | null>(
           loginResponse.message || "Login failed",
@@ -62,14 +50,9 @@ export class LoginService {
     }
   }
 
-  public isLoginResponseWithId(obj: any): obj is { id: string; email: string } {
-    return obj && typeof obj.id === "string" && typeof obj.email === "string";
-  }
-
   public async signup(client: Client): Promise<ServiceResponse<string | null>> {
     try {
       const signupResponse: ServiceResponse<Client | null> = await this.clientRepository.createAsync(client);
-      console.log(signupResponse);
       if (signupResponse.success) {
         return ServiceResponse.success<string | null>("Signup successful", null, StatusCodes.OK);
       } else {
