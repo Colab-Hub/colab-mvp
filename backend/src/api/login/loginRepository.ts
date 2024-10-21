@@ -1,10 +1,15 @@
-import type { Login } from "./loginModel";
 import { ServiceResponse } from "@/common/models/serviceResponse";
-import { StatusCodes } from "http-status-codes";
-import bcrypt from 'bcrypt';
 import { type DatabaseHandler, databaseHandler } from "@/common/utils/databaseHandler";
+import bcrypt from "bcrypt";
+import { StatusCodes } from "http-status-codes";
+import type { Login } from "./loginModel";
 
-const SELECT_USER_BY_EMAIL = "SELECT * FROM clients WHERE email = $1";
+const SELECT_USER_BY_EMAIL = "SELECT id, email, password FROM clients WHERE email = $1";
+
+interface loginRepositoryResponse {
+  id: string;
+  email: string;
+}
 
 export class LoginRepository {
   private databaseHandler: DatabaseHandler;
@@ -14,10 +19,8 @@ export class LoginRepository {
   }
 
   public async loginAsync(login: Login): Promise<ServiceResponse<Login | null>> {
-    console.log("LoginRepository.loginAsync");
-    console.log("login: ", login);
     try {
-      const loginResponse: ServiceResponse<Login | null> = await this.matchEmailAndPassword(login.email, login.password);
+      const loginResponse: ServiceResponse<any> = await this.matchEmailAndPassword(login.email, login.password);
       if (loginResponse.success) {
         return ServiceResponse.success<Login | null>("Login successful", loginResponse.responseObject, StatusCodes.OK);
       } else {
@@ -29,15 +32,11 @@ export class LoginRepository {
       }
     } catch (error) {
       console.log("Error during login: ", (error as Error).message);
-      return ServiceResponse.failure(
-        "An error occurred while logging in.",
-        null,
-        StatusCodes.INTERNAL_SERVER_ERROR,
-      );
+      return ServiceResponse.failure("An error occurred while logging in.", null, StatusCodes.INTERNAL_SERVER_ERROR);
     }
   }
 
-  public async matchEmailAndPassword(email: string, password: string): Promise<ServiceResponse<Login | null>> {
+  public async matchEmailAndPassword(email: string, password: string): Promise<ServiceResponse<loginRepositoryResponse | null>> {
     try {
       const user = await this.findByEmail(email);
       if (!user) {
@@ -47,8 +46,8 @@ export class LoginRepository {
       if (!isMatch) {
         return ServiceResponse.failure("Invalid password", null, StatusCodes.UNAUTHORIZED);
       }
-      const loginData: Login = { email: user.email, password: user.password };
-      return ServiceResponse.success<Login>("Password match", loginData, StatusCodes.OK);
+      const loginData = { id: user.id, email: user.email };
+      return ServiceResponse.success<loginRepositoryResponse>("Password match", loginData, StatusCodes.OK);
     } catch (error) {
       console.log("Error matching email and password: ", (error as Error).message);
       return ServiceResponse.failure(
@@ -66,7 +65,6 @@ export class LoginRepository {
     } catch (error) {
       console.log("Error finding user by email: ", (error as Error).message);
       return null;
-      
     }
   }
 }

@@ -40,3 +40,12 @@ export const loginValidations = {
   email: z.string().email(),
   password: z.string().min(6).max(50),
 };
+
+export const authValidations = {
+  token: z.string(),
+};
+
+export const createAuthValidations = {
+  id: z.string(),
+  email: z.string().email(),
+};

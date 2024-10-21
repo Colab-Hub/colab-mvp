@@ -1,11 +1,16 @@
 import { ServiceResponse } from "@/common/models/serviceResponse";
-import { Login } from "./loginModel";
-import { ClientRepository } from "../client/clientRepository";
-import { StatusCodes } from "http-status-codes";
 import { logger } from "@/server";
-import jwt from "jsonwebtoken";
-import { Client } from "../client/clientModel";
+import { StatusCodes } from "http-status-codes";
+import { authService } from "../auth/authService";
+import type { Client } from "../client/clientModel";
+import { ClientRepository } from "../client/clientRepository";
+import type { Login } from "./loginModel";
 import { LoginRepository } from "./loginRepository";
+
+interface JWToken {
+  id: string;
+  email: string;
+}
 
 export class LoginService {
   private clientRepository: ClientRepository;
@@ -18,16 +23,15 @@ export class LoginService {
 
   public async login(login: Login): Promise<ServiceResponse<string | null>> {
     try {
-      const loginResponse: ServiceResponse<Login | null> = await this.loginRepository.loginAsync(login);
-      if (loginResponse.success) {
-        const auth = {
-          secret: String(process.env.SECRET),
-          expires: '1h',
-        };
+      const loginResponse: ServiceResponse<Login | null | JWToken> = await this.loginRepository.loginAsync(login);
 
-        const token = jwt.sign({ email: login.email }, auth.secret, { expiresIn: auth.expires });
-
-        return ServiceResponse.success<string | null>("Login successful", token, StatusCodes.OK);
+      if (loginResponse.success && loginResponse.responseObject) {
+        const tokenResponse = await authService.createToken(loginResponse.responseObject as JWToken);
+        return ServiceResponse.success<string | null>(
+          tokenResponse.responseObject,
+          null,
+          StatusCodes.OK,
+        );
       } else {
         return ServiceResponse.failure<string | null>(
           loginResponse.message || "Login failed",
@@ -48,8 +52,7 @@ export class LoginService {
 
   public async signup(client: Client): Promise<ServiceResponse<string | null>> {
     try {
-      const signupResponse: ServiceResponse<Client | null> = await this.clientRepository.createAsync(client)
-      console.log(signupResponse);
+      const signupResponse: ServiceResponse<Client | null> = await this.clientRepository.createAsync(client);
       if (signupResponse.success) {
         return ServiceResponse.success<string | null>("Signup successful", null, StatusCodes.OK);
       } else {

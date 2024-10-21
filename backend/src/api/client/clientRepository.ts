@@ -1,9 +1,9 @@
-import { type DatabaseHandler, databaseHandler } from "@/common/utils/databaseHandler";
-import { v4 as uuidv4 } from "uuid";
-import bcrypt from 'bcrypt';
-import type { Client } from "./clientModel";
 import { ServiceResponse } from "@/common/models/serviceResponse";
+import { type DatabaseHandler, databaseHandler } from "@/common/utils/databaseHandler";
+import bcrypt from "bcrypt";
 import { StatusCodes } from "http-status-codes";
+import { v4 as uuidv4 } from "uuid";
+import type { Client } from "./clientModel";
 
 const SELECT_CLIENTS = "SELECT * FROM clients";
 const SELECT_CLIENT_BY_ID = "SELECT * FROM clients WHERE id = $1";
@@ -73,39 +73,32 @@ export class ClientRepository {
   async createAsync(client: Client): Promise<ServiceResponse<Client | null>> {
     try {
       const hashedPassword = await bcrypt.hash(client.password, 10);
-      const result = await this.databaseHandler.runQuery(
-        INSERT_CLIENT,
-        [
-          uuidv4(),
-          client.name,
-          hashedPassword,
-          client.surname,
-          client.age,
-          client.areasOfInterest,
-          client.address.zipCode,
-          client.address.street,
-          client.address.city,
-          client.address.state,
-          client.address.number,
-          client.address.complement,
-          client.isActive,
-          client.subscriptionLevel,
-          client.cellphone,
-          client.email,
-          client.additionalInfo,
-          new Date().toISOString(),
-          new Date().toISOString(),
-        ],
-      );
+      const result = await this.databaseHandler.runQuery(INSERT_CLIENT, [
+        uuidv4(),
+        client.name,
+        hashedPassword,
+        client.surname,
+        client.age,
+        client.areasOfInterest,
+        client.address.zipCode,
+        client.address.street,
+        client.address.city,
+        client.address.state,
+        client.address.number,
+        client.address.complement,
+        client.isActive,
+        client.subscriptionLevel,
+        client.cellphone,
+        client.email,
+        client.additionalInfo,
+        new Date().toISOString(),
+        new Date().toISOString(),
+      ]);
       const clientResponse = this.mapRowToClient(result.rows[0]);
       return ServiceResponse.success<Client | null>("Login successful", clientResponse, StatusCodes.OK);
     } catch (error) {
       console.log("Error creating client: ", (error as Error).message);
-      return ServiceResponse.failure(
-        "An error occurred while logging in.",
-        null,
-        StatusCodes.INTERNAL_SERVER_ERROR,
-      );
+      return ServiceResponse.failure("An error occurred while logging in.", null, StatusCodes.INTERNAL_SERVER_ERROR);
     }
   }
 }
