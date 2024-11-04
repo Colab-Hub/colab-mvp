@@ -5,18 +5,17 @@ import { StatusCodes } from "http-status-codes";
 import { v4 as uuidv4 } from "uuid";
 import type { Client } from "./clientModel";
 
-const SELECT_CLIENTS = "SELECT * FROM clients";
-const SELECT_CLIENT_BY_ID = "SELECT * FROM clients WHERE id = $1";
-const INSERT_CLIENT = `
-  INSERT INTO clients (
-    id, name, password, surname, age, areas_of_interest, address_zip_code, address_street, address_city, address_state, address_number, address_complement, is_active, subscription_level, cellphone, email, additional_info, created_at, updated_at
-  ) VALUES (
-    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19
-  ) RETURNING *`;
 
 export class ClientRepository {
   private databaseHandler: DatabaseHandler;
-
+  private SELECT_CLIENTS = "SELECT * FROM clients";
+  private SELECT_CLIENT_BY_ID = "SELECT * FROM clients WHERE id = $1";
+  private INSERT_CLIENT = `
+      INSERT INTO clients (
+        id, name, password, surname, age, areas_of_interest, address_zip_code, address_street, address_city, address_state, address_number, address_complement, is_active, subscription_level, cellphone, email, additional_info, created_at, updated_at
+      ) VALUES (
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19
+      ) RETURNING *`;
   constructor() {
     this.databaseHandler = databaseHandler;
   }
@@ -49,7 +48,7 @@ export class ClientRepository {
 
   async findAllAsync(): Promise<Client[]> {
     try {
-      const result = await this.databaseHandler.runQuery(SELECT_CLIENTS, []);
+      const result = await this.databaseHandler.runQuery(this.SELECT_CLIENTS, []);
       return result.rows.map(this.mapRowToClient);
     } catch (error) {
       console.error("Error finding clients:", error);
@@ -59,7 +58,7 @@ export class ClientRepository {
 
   async findByIdAsync(id: string): Promise<Client | null> {
     try {
-      const result = await this.databaseHandler.runQuery(SELECT_CLIENT_BY_ID, [id]);
+      const result = await this.databaseHandler.runQuery(this.SELECT_CLIENT_BY_ID, [id]);
       if (result.rows.length === 0) {
         return null;
       }
@@ -73,7 +72,7 @@ export class ClientRepository {
   async createAsync(client: Client): Promise<ServiceResponse<Client | null>> {
     try {
       const hashedPassword = await bcrypt.hash(client.password, 10);
-      const result = await this.databaseHandler.runQuery(INSERT_CLIENT, [
+      const result = await this.databaseHandler.runQuery(this.INSERT_CLIENT, [
         uuidv4(),
         client.name,
         hashedPassword,

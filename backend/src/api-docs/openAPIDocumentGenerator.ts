@@ -4,9 +4,16 @@ import { authRegistry } from "@/api/auth/authRouter";
 import { clientRegistry } from "@/api/client/clientRouter";
 import { healthCheckRegistry } from "@/api/healthCheck/healthCheckRouter";
 import { loginRegistry } from "@/api/login/loginRouter";
+import {opportunitiesRegistry} from "@/api/opportunities/OpportunitiesRouter";
 
 export function generateOpenAPIDocument() {
-  const registry = new OpenAPIRegistry([healthCheckRegistry, clientRegistry, loginRegistry, authRegistry]);
+  const registry = new OpenAPIRegistry([
+    healthCheckRegistry,
+    clientRegistry,
+    loginRegistry,
+    authRegistry,
+    opportunitiesRegistry
+  ]);
   const generator = new OpenApiGeneratorV3(registry.definitions);
 
   return generator.generateDocument({

@@ -36,6 +36,16 @@ export const clientValidations = {
   updatedAt: z.string().optional(),
 };
 
+export const opportunitiesValidations = {
+    id: z.string().optional(),
+    title: z.string().min(3).max(50),
+    description: z.string().min(3).max(500),
+    areasOfInterest: z.array(z.enum(areasOfInterest)),
+    additionalInfo: z.string().optional(),
+    createdAt: z.string().optional(),
+    updatedAt: z.string().optional(),
+}
+
 export const loginValidations = {
   email: z.string().email(),
   password: z.string().min(6).max(50),
