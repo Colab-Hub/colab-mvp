@@ -5,7 +5,6 @@ import { StatusCodes } from "http-status-codes";
 import { v4 as uuidv4 } from "uuid";
 import type { Client } from "./clientModel";
 
-
 export class ClientRepository {
   private databaseHandler: DatabaseHandler;
   private SELECT_CLIENTS = "SELECT * FROM clients";

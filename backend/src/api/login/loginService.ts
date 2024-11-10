@@ -27,11 +27,7 @@ export class LoginService {
 
       if (loginResponse.success && loginResponse.responseObject) {
         const tokenResponse = await authService.createToken(loginResponse.responseObject as JWToken);
-        return ServiceResponse.success<string | null>(
-          tokenResponse.responseObject,
-          null,
-          StatusCodes.OK,
-        );
+        return ServiceResponse.success<string | null>(tokenResponse.responseObject, null, StatusCodes.OK);
       } else {
         return ServiceResponse.failure<string | null>(
           loginResponse.message || "Login failed",

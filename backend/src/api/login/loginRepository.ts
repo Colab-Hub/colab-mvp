@@ -36,7 +36,10 @@ export class LoginRepository {
     }
   }
 
-  public async matchEmailAndPassword(email: string, password: string): Promise<ServiceResponse<loginRepositoryResponse | null>> {
+  public async matchEmailAndPassword(
+    email: string,
+    password: string,
+  ): Promise<ServiceResponse<loginRepositoryResponse | null>> {
     try {
       const user = await this.findByEmail(email);
       if (!user) {

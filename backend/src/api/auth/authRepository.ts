@@ -13,7 +13,7 @@ export class AuthRepository {
     }
   }
   public createToken(createInfo: object): ServiceResponse<string> {
-    try { 
+    try {
       const token = jwt.sign(createInfo, process.env.SECRET || "", {
         expiresIn: "1h",
       });

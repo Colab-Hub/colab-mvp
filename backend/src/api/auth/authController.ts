@@ -13,7 +13,6 @@ class AuthController {
     const serviceResponse = await authService.createToken(req.body);
     return handleServiceResponse(serviceResponse, res);
   };
-
 }
 
 export const authController = new AuthController();
