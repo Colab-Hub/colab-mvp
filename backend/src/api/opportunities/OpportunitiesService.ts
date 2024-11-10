@@ -115,7 +115,7 @@ export class OpportunitiesService {
     try {
       const deleteResponse = await this.opportunitiesRepository.deleteByIdAsync(id);
       if (deleteResponse.success) {
-        return ServiceResponse.success("Opportunity deleted successfully", deleteResponse.responseObject);
+        return ServiceResponse.success<Opportunity | null>("Opportunity deleted successfully", null);
       } else {
         return ServiceResponse.failure(
           deleteResponse.message || "Opportunity deletion failed",

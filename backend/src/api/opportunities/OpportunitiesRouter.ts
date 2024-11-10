@@ -6,8 +6,8 @@ import {
 } from "@/api/opportunities/OpportunitiesModel";
 import { OpenAPIRegistry } from "@asteasolutions/zod-to-openapi";
 import express, { type Router } from "express";
-import { z } from "zod";
-import { opportunitiesController } from "@/api/opportunities/opportunitiesController";
+import { any, unknown, z} from "zod";
+import { opportunitiesController } from "@/api/opportunities/OpportunitiesController";
 
 export const opportunitiesRegistry = new OpenAPIRegistry();
 export const opportunitiesRouter: Router = express.Router();
@@ -34,7 +34,7 @@ opportunitiesRegistry.registerPath({
   method: "post",
   path: "/opportunities",
   tags: ["Opportunities"],
-  requestBody: { content: { "application/json": { schema: PostOpportunitiesSchema } } },
+  requestBody: { content: { "application/json": { schema: undefined } } },
   responses: createApiResponse(PostOpportunitiesSchema, "Success"),
 });
 opportunitiesRouter.post("/", opportunitiesController.createOpportunity);

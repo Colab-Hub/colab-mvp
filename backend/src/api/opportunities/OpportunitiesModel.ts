@@ -20,13 +20,13 @@ export const PostOpportunitiesSchema = z.object({
 });
 
 export class Opportunity<T = null> {
-  readonly id: string;
-  readonly title: string;
-  readonly description: string;
-  readonly areasOfInterest: string[]; // ex.:['marketing', 'developmet', 'arts']
-  readonly createdAt: Date;
-  readonly updatedAt: Date;
-  readonly additionalInfo: string;
+  readonly id!: string;
+  readonly title!: string;
+  readonly description!: string;
+  readonly areasOfInterest!: string[]; // ex.:['marketing', 'developmet', 'arts']
+  readonly createdAt!: Date;
+  readonly updatedAt!: Date;
+  readonly additionalInfo!: string;
 
   private constructor() {
     // Constructor should not assign non-existent variables
