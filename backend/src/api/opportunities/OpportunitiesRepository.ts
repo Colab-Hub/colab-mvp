@@ -81,15 +81,26 @@ export class OpportunitiesRepository {
 
   public async updateAsync(id: string, opportunity: Opportunity): Promise<ServiceResponse<Opportunity | null>> {
     try {
-      console.log("opportunity", opportunity);
-      console.log("id", id);
-      const result = await this.databaseHandler.runQuery(this.UPDATE_OPPORTUNITY, [
-        opportunity.title,
-        opportunity.description,
-        opportunity.areasOfInterest,
-        opportunity.additionalInfo,
-        id,
-      ]);
+      const entries = Object.entries(opportunity).filter(([, value]) => value !== undefined);
+
+      if (entries.length === 0) {
+        return ServiceResponse.failure("No fields to update", null);
+      }
+
+
+      const fieldsToUpdate = entries.map(([key], index) => `${key} = $${index + 1}`);
+      const values = entries.map(([, value]) => value);
+      values.push(id);
+
+      const updateQuery = `
+      UPDATE opportunities
+      SET ${fieldsToUpdate.join(", ")}
+      WHERE id = $${values.length}
+      RETURNING *;
+      `;
+      
+      const result = await this.databaseHandler.runQuery(updateQuery, values);
+      
       return ServiceResponse.success("Opportunity updated successfully", result.rows[0]);
     } catch (error) {
       console.error("Error updating opportunity:", error);
@@ -97,13 +108,18 @@ export class OpportunitiesRepository {
     }
   }
 
-  public async deleteByIdAsync(id: string): Promise<ServiceResponse> {
+  public async deleteByIdAsync(id: string): Promise<ServiceResponse<boolean>> {
     try {
-      await this.databaseHandler.runQuery(this.DELETE_OPPORTUNITY, [id]);
-      return ServiceResponse.success("Opportunity deleted successfully", null);
+      const result = await this.databaseHandler.runQuery(this.DELETE_OPPORTUNITY, [id]);
+
+      if (result.rows.length == 0) {
+        return ServiceResponse.failure("Opportunity not found", false);
+      }
+
+      return ServiceResponse.success("Opportunity deleted successfully", true);
     } catch (error) {
       console.error("Error deleting opportunity:", error);
-      return ServiceResponse.failure("Error deleting opportunity", null);
+      return ServiceResponse.failure("Error deleting opportunity", false);
     }
   }
 }
