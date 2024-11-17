@@ -1,0 +1,119 @@
+{
+	"info": {
+		"_postman_id": "0dd1daf4-1628-4d12-99f1-57ac61629b70",
+		"name": "ColabCollection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30124331"
+	},
+	"item": [
+		{
+			"name": "Backend",
+			"item": [
+				{
+					"name": "CreateOpportunity",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"Senior Developer Opportunity\",\r\n  \"type\": \"full-time\",\r\n  \"description\": \"A great opportunity to join a growing tech company.\",\r\n  \"startDate\": \"2024-12-01\",\r\n  \"endDate\": \"2025-12-01\",\r\n  \"location\": \"New York, NY\",\r\n  \"isRemote\": true,\r\n  \"isPaid\": true,\r\n  \"contractType\": [\"contract\", \"freelance\"],\r\n  \"activityArea\": [\"development\"],\r\n  \"experienceLevel\": [\"junior\"],\r\n  \"requiredSkills\": [\"JavaScript\", \"React\", \"Node.js\"],\r\n  \"timeCommitment\": \"full-time\",\r\n  \"languages\": [\"English\", \"Spanish\"],\r\n  \"feedbackTime\": \"2 weeks\",\r\n  \"applicantsEmails\": [\"applicant1@example.com\", \"applicant2@example.com\"],\r\n  \"howManyApplicants\": 10,\r\n  \"hirerEmail\": \"recruiter@example.com\",\r\n  \"hirerName\": \"John Doe\",\r\n  \"hirerPhone\": \"123-456-7890\",\r\n  \"hirerCompany\": \"Tech Innovators Inc.\",\r\n  \"hirerCompanyWebsite\": \"https://www.techinnovators.com\",\r\n  \"hirerCompanyLogo\": \"https://www.techinnovators.com/logo.png\",\r\n  \"areasOfInterest\": [\"development\"],\r\n  \"additionalInfo\": \"Additional information about the opportunity.\",\r\n  \"isActive\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/opportunities",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"opportunities"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetOpportunities",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/opportunities",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"opportunities"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetOpportunity",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "EditOpportunity",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"is_remote\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/opportunities/8ea473c5-f6b5-48e0-a5db-e34976009779",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"opportunities",
+								"8ea473c5-f6b5-48e0-a5db-e34976009779"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteOpportunity",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/opportunities/8ea473c5-f6b5-48e0-a5db-e34976009779",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"opportunities",
+								"8ea473c5-f6b5-48e0-a5db-e34976009779"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
