@@ -1,59 +1,46 @@
-﻿import { opportunitiesValidations } from "@/common/utils/commonValidation";
-import { extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi";
-import { StatusCodes } from "http-status-codes";
-import { z } from "zod";
+﻿import type { OpportunitiesSchema } from "./schema/OpportunitiesSchema";
 
-extendZodWithOpenApi(z);
-
-export type Opportunities = z.infer<typeof OpportunitiesSchema>;
-
-extendZodWithOpenApi(z);
-
-export const OpportunitiesSchema = z.object(opportunitiesValidations);
-
-export const GetOpportunitiesSchema = z.object({
-  params: z.object({ id: opportunitiesValidations.id }),
-});
-
-export const PostOpportunitiesSchema = z.object({
-  params: OpportunitiesSchema,
-});
-
-export class Opportunity<T = null> {
+export class Opportunity {
   readonly id: string;
   readonly title: string;
+  readonly type: string;
   readonly description: string;
-  readonly areasOfInterest: string[]; // ex.:['marketing', 'developmet', 'arts']
+  readonly startDate: Date;
+  readonly endDate: Date;
+  readonly location: string;
+  readonly isRemote: boolean;
+  readonly isPaid: boolean;
+  readonly contractType: string[];
+  readonly activityArea: string[];
+  readonly experienceLevel: string[];
+  readonly requiredSkills: string[];
+  readonly timeCommitment: string;
+  readonly languages: string[];
+  readonly feedbackTime: string;
+  readonly _applicantsEmails: string[];
+  readonly _howManyApplicants: number;
+  readonly hirerEmail: string;
+  readonly hirerName: string;
+  readonly hirerPhone: string;
+  readonly hirerCompany: string;
+  readonly hirerCompanyWebsite: string;
+  readonly hirerCompanyLogo: string;
+  readonly areasOfInterest: string[];
   readonly createdAt: Date;
   readonly updatedAt: Date;
   readonly additionalInfo: string;
+  readonly isActive: boolean;
 
-  private constructor() {
-    // Constructor should not assign non-existent variables
+  constructor(init: OpportunitiesSchema) {
+    Object.assign(this as ObjectConstructor, init);
+    this._applicantsEmails = [];
+    this._howManyApplicants = 0;
+  }
+  get applicantsEmails(): string[] {
+    return [...this._applicantsEmails];
   }
 
-  static success<T>(message: string, responseObject: T, statusCode: number = StatusCodes.OK) {
-    return new ServiceResponse(true, message, responseObject, statusCode);
-  }
-
-  static failure<T>(message: string, responseObject: T, statusCode: number = StatusCodes.BAD_REQUEST) {
-    return new ServiceResponse(false, message, responseObject, statusCode);
+  get howManyApplicants(): number {
+    return this._howManyApplicants;
   }
 }
-
-class ServiceResponse<T> {
-  constructor(
-    public success: boolean,
-    public message: string,
-    public responseObject: T,
-    public statusCode: number,
-  ) {}
-}
-
-export const ServiceResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
-  z.object({
-    success: z.boolean(),
-    message: z.string(),
-    responseObject: dataSchema.optional(),
-    statusCode: z.number(),
-  });

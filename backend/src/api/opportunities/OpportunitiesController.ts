@@ -1,6 +1,6 @@
-﻿import { handleServiceResponse } from "@/common/utils/httpHandlers";
+﻿import { opportunitiesService } from "@/api/opportunities/OpportunitiesService";
+import { handleServiceResponse } from "@/common/utils/httpHandlers";
 import type { RequestHandler } from "express";
-import { opportunitiesService } from "@/api/opportunities/opportunitiesService";
 
 export class OpportunitiesController {
   public getOpportunities: RequestHandler = async (_req, res) => {
