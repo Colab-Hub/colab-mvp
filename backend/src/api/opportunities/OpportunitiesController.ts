@@ -1,6 +1,6 @@
-﻿import { handleServiceResponse } from "@/common/utils/httpHandlers";
+﻿import { opportunitiesService } from "@/api/opportunities/OpportunitiesService";
+import { handleServiceResponse } from "@/common/utils/httpHandlers";
 import type { RequestHandler } from "express";
-import { opportunitiesService } from "@/api/opportunities/OpportunitiesService";
 
 export class OpportunitiesController {
   public getOpportunities: RequestHandler = async (_req, res) => {
@@ -30,7 +30,6 @@ export class OpportunitiesController {
     const serviceResponse = await opportunitiesService.deleteById(id);
     return handleServiceResponse(serviceResponse, res);
   };
-
 }
 
 export const opportunitiesController = new OpportunitiesController();
