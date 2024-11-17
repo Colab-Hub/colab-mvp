@@ -1,13 +1,13 @@
 ﻿import { createApiResponse } from "@/api-docs/openAPIResponseBuilders";
+import { opportunitiesController } from "@/api/opportunities/OpportunitiesController";
 import {
-  OpportunitiesSchema,
   GetOpportunitiesSchema,
+  OpportunitiesSchema,
   PostOpportunitiesSchema,
 } from "@/api/opportunities/schema/OpportunitiesSchema";
 import { OpenAPIRegistry } from "@asteasolutions/zod-to-openapi";
 import express, { type Router } from "express";
-import { any, unknown, z} from "zod";
-import { opportunitiesController } from "@/api/opportunities/OpportunitiesController";
+import { any, unknown, z } from "zod";
 
 export const opportunitiesRegistry = new OpenAPIRegistry();
 export const opportunitiesRouter: Router = express.Router();

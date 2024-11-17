@@ -1,4 +1,4 @@
-﻿import { OpportunitiesSchema } from "./schema/OpportunitiesSchema";
+﻿import type { OpportunitiesSchema } from "./schema/OpportunitiesSchema";
 
 export class Opportunity {
   readonly id: string;
@@ -29,6 +29,7 @@ export class Opportunity {
   readonly createdAt: Date;
   readonly updatedAt: Date;
   readonly additionalInfo: string;
+  readonly isActive: boolean;
 
   constructor(init: OpportunitiesSchema) {
     Object.assign(this as ObjectConstructor, init);

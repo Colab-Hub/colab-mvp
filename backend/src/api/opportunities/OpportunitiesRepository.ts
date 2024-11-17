@@ -2,24 +2,15 @@
 import { ServiceResponse } from "@/common/models/serviceResponse";
 import { DatabaseHandler } from "@/common/utils/databaseHandler";
 import { v4 as uuidv4 } from "uuid";
+import {
+  DELETE_OPPORTUNITY,
+  INSERT_OPPORTUNITY,
+  SELECT_OPPORTUNITIES,
+  SELECT_OPPORTUNITY_BY_ID,
+} from "./queries/OpportunitiesQueries";
+
 export class OpportunitiesRepository {
   private databaseHandler: DatabaseHandler;
-  private SELECT_OPPORTUNITIES = "SELECT * FROM opportunities";
-  private SELECT_OPPORTUNITY_BY_ID = "SELECT * FROM opportunities WHERE id = $1";
-  private INSERT_OPPORTUNITY = `
-        INSERT INTO opportunities (
-            id, title, description, areas_of_interest, additional_info
-        ) VALUES (
-            $1, $2, $3, $4, $5
-        ) RETURNING *
-    `;
-  private UPDATE_OPPORTUNITY = `
-        UPDATE opportunities
-        SET title = $1, description = $2, areas_of_interest = $3, additional_info = $4
-        WHERE id = $5
-        RETURNING *
-    `;
-  private DELETE_OPPORTUNITY = "DELETE FROM opportunities WHERE id = $1";
 
   constructor() {
     this.databaseHandler = new DatabaseHandler();
@@ -56,14 +47,14 @@ export class OpportunitiesRepository {
       updatedAt: row.updated_at,
       additionalInfo: row.additional_info,
       _applicantsEmails: row.applicants_emails,
-      _howManyApplicants: row.how_many_applicants
-
+      _howManyApplicants: row.how_many_applicants,
+      isActive: row.is_active,
     };
   }
 
   public async findAllAsync(): Promise<ServiceResponse<Opportunity[]>> {
     try {
-      const result = await this.databaseHandler.runQuery(this.SELECT_OPPORTUNITIES, []);
+      const result = await this.databaseHandler.runQuery(SELECT_OPPORTUNITIES, []);
       const opportunities = result.rows.map(this.mapRowToOpportunity);
       return ServiceResponse.success("Opportunities found successfully", opportunities);
     } catch (error) {
@@ -74,7 +65,7 @@ export class OpportunitiesRepository {
 
   public async findByIdAsync(id: string): Promise<ServiceResponse<Opportunity | null>> {
     try {
-      const result = await this.databaseHandler.runQuery(this.SELECT_OPPORTUNITY_BY_ID, [id]);
+      const result = await this.databaseHandler.runQuery(SELECT_OPPORTUNITY_BY_ID, [id]);
       if (result.rows.length === 0) {
         return ServiceResponse.failure("Opportunity not found", null);
       }
@@ -88,22 +79,48 @@ export class OpportunitiesRepository {
 
   public async createAsync(opportunity: Opportunity): Promise<ServiceResponse<Opportunity | null>> {
     try {
-      const result = await this.databaseHandler.runQuery(this.INSERT_OPPORTUNITY, [
-        uuidv4(),
+      const id = uuidv4();
+      await this.databaseHandler.runQuery(INSERT_OPPORTUNITY, [
+        id,
         opportunity.title,
+        opportunity.type,
         opportunity.description,
-        opportunity.areasOfInterest,
+        opportunity.startDate,
+        opportunity.endDate,
+        opportunity.location,
+        opportunity.isRemote,
+        opportunity.isPaid,
+        opportunity.contractType,
+        opportunity.activityArea,
+        opportunity.experienceLevel,
+        opportunity.requiredSkills,
+        opportunity.timeCommitment,
+        opportunity.languages,
+        opportunity.feedbackTime,
+        opportunity.applicantsEmails,
+        opportunity.howManyApplicants,
+        opportunity.hirerEmail,
+        opportunity.hirerName,
+        opportunity.hirerPhone,
+        opportunity.hirerCompany,
+        opportunity.hirerCompanyWebsite,
+        opportunity.hirerCompanyLogo,
+        new Date().toISOString(),
+        new Date().toISOString(),
         opportunity.additionalInfo,
+        opportunity.isActive,
       ]);
-      console.log("result", result);
-      return ServiceResponse.success("Opportunity created successfully", opportunity);
+      return ServiceResponse.success(`Opportunity·Number:·${id}·Created·successfully`, opportunity);
     } catch (error) {
       console.error("Error creating opportunity:", error);
       return ServiceResponse.failure("Error creating opportunity", null);
     }
   }
 
-  public async updateAsync(id: string, opportunity: Opportunity): Promise<ServiceResponse<Opportunity | null>> {
+  public async updateAsync(
+    id: string,
+    opportunity: Partial<Opportunity>,
+  ): Promise<ServiceResponse<Opportunity | null>> {
     try {
       const entries = Object.entries(opportunity).filter(([, value]) => value !== undefined);
 
@@ -111,20 +128,19 @@ export class OpportunitiesRepository {
         return ServiceResponse.failure("No fields to update", null);
       }
 
-
       const fieldsToUpdate = entries.map(([key], index) => `${key} = $${index + 1}`);
       const values = entries.map(([, value]) => value);
       values.push(id);
 
       const updateQuery = `
-      UPDATE opportunities
-      SET ${fieldsToUpdate.join(", ")}
-      WHERE id = $${values.length}
-      RETURNING *;
-      `;
-      
+        UPDATE opportunities
+        SET ${fieldsToUpdate.join(", ")}
+        WHERE id = $${values.length}
+        RETURNING *;
+        `;
+
       const result = await this.databaseHandler.runQuery(updateQuery, values);
-      
+
       return ServiceResponse.success("Opportunity updated successfully", result.rows[0]);
     } catch (error) {
       console.error("Error updating opportunity:", error);
@@ -134,9 +150,9 @@ export class OpportunitiesRepository {
 
   public async deleteByIdAsync(id: string): Promise<ServiceResponse<boolean>> {
     try {
-      const result = await this.databaseHandler.runQuery(this.DELETE_OPPORTUNITY, [id]);
+      const result = await this.databaseHandler.runQuery(DELETE_OPPORTUNITY, [id]);
 
-      if (result.rows.length == 0) {
+      if (result.rows.length === 0) {
         return ServiceResponse.failure("Opportunity not found", false);
       }
 
