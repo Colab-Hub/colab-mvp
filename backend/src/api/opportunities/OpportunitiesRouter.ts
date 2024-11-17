@@ -1,9 +1,9 @@
 ﻿import { createApiResponse } from "@/api-docs/openAPIResponseBuilders";
 import {
-  GetOpportunitiesSchema,
   OpportunitiesSchema,
+  GetOpportunitiesSchema,
   PostOpportunitiesSchema,
-} from "@/api/opportunities/OpportunitiesModel";
+} from "@/api/opportunities/schema/OpportunitiesSchema";
 import { OpenAPIRegistry } from "@asteasolutions/zod-to-openapi";
 import express, { type Router } from "express";
 import { any, unknown, z} from "zod";

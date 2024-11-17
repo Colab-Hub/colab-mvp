@@ -29,11 +29,35 @@ export class OpportunitiesRepository {
     return {
       id: row.id,
       title: row.title,
+      type: row.type,
       description: row.description,
+      startDate: row.start_date,
+      endDate: row.end_date,
+      location: row.location,
+      isRemote: row.is_remote,
+      isPaid: row.is_paid,
+      contractType: row.contract_type,
+      activityArea: row.activity_area,
+      experienceLevel: row.experience_level,
+      requiredSkills: row.required_skills,
+      timeCommitment: row.time_commitment,
+      languages: row.languages,
+      feedbackTime: row.feedback_time,
+      applicantsEmails: row.applicants_emails,
+      howManyApplicants: row.how_many_applicants,
+      hirerEmail: row.hirer_email,
+      hirerName: row.hirer_name,
+      hirerPhone: row.hirer_phone,
+      hirerCompany: row.hirer_company,
+      hirerCompanyWebsite: row.hirer_company_website,
+      hirerCompanyLogo: row.hirer_company_logo,
       areasOfInterest: row.areas_of_interest,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
       additionalInfo: row.additional_info,
+      _applicantsEmails: row.applicants_emails,
+      _howManyApplicants: row.how_many_applicants
+
     };
   }
 
