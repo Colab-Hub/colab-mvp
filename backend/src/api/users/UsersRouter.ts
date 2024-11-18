@@ -23,12 +23,36 @@ usersRegistry.registerPath({
     responses: createApiResponse(z.array(GetUserSchema), "Success"),
 });                                                
 usersRouter.get("/", userController.getUsers);
-// usersRouter.get("/:id", userController.getOpportunity);
-//
-// usersRegistry.registerPath(  {
-//     method: "post",
-//     path: "/users",
-//     tags: ["Users"],
-//     responses: createApiResponse(PostUserSchema, "Success"),
-// });
-// usersRouter.post("/", opportunitiesController.createOpportunity);
+
+usersRegistry.registerPath({
+    method: "get",
+    path: "/users/:id",
+    tags: ["Users"],
+    responses: createApiResponse(GetUserSchema, "Success"),
+});
+usersRouter.get("/:id", userController.getUserById);
+
+
+usersRegistry.registerPath(  {
+    method: "post",
+    path: "/users",
+    tags: ["Users"],
+    responses: createApiResponse(PostUserSchema, "Success"),
+});
+usersRouter.post("/", userController.createUser);
+
+usersRegistry.registerPath({
+    method: "put",
+    path: "/users/:id",
+    tags: ["Users"],
+    responses: createApiResponse(PostUserSchema, "Success"),
+});
+usersRouter.put("/:id", userController.updateUser);
+
+usersRegistry.registerPath({
+    method: "delete",
+    path: "/users/:id",
+    tags: ["Users"],
+    responses: createApiResponse(PostUserSchema, "Success"),
+});
+usersRouter.delete("/:id", userController.deleteUser);

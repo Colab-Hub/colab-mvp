@@ -129,8 +129,11 @@ export class OpportunitiesRepository {
       }
 
       const fieldsToUpdate = entries.map(([key], index) => `${key} = $${index + 1}`);
+      fieldsToUpdate.push(`updated_at = $${entries.length + 1}`);
       const values = entries.map(([, value]) => value);
+      values.push(new Date().toISOString());
       values.push(id);
+
 
       const updateQuery = `
         UPDATE opportunities
