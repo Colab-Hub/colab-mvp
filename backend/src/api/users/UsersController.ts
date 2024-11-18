@@ -14,6 +14,27 @@ class UsersController {
     const serviceResponse = await this.usersService.findAll();
     return handleServiceResponse(serviceResponse, res);
   };
+    
+  public getUserById: RequestHandler = async (req, res) => {
+      const serviceResponse = await this.usersService.findById(req.params.id);
+      return handleServiceResponse(serviceResponse, res);
+  }
+  
+  public createUser: RequestHandler = async (req, res) => {
+    const serviceResponse = await this.usersService.create(req.body);
+    return handleServiceResponse(serviceResponse, res);
+  }
+    
+  public updateUser: RequestHandler = async (req, res) => {
+      const serviceResponse = await this.usersService.update(req.params.id, req.body);
+      return handleServiceResponse(serviceResponse, res);
+  }
+  
+  public deleteUser: RequestHandler = async (req, res) => {
+      const serviceResponse = await this.usersService.deleteById(req.params.id);
+      return handleServiceResponse(serviceResponse, res);
+  }
+    
 }
 
 export const userController = new UsersController();
